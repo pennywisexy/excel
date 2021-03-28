@@ -70,12 +70,12 @@
     position: absolute;
     bottom: 0;
     right: 0;
-    background-color: $primary-color;
+    background: $primary-color;
     opacity: 0;
-    z-index: 3;
+    z-index: 1000;
 
     &:hover {
-      opacity: 1 !important;
+      opacity: 1!important;
     }
   }
 
