@@ -3,10 +3,24 @@ const CODES = {
   Z: 90
 };
 
-function toCell(_, col) {
-  return `
-    <div class="cell" contenteditable data-col="${col}"></div>
-  `;
+// function toCell(row, col) {
+//   return `
+//     <div class="cell" contenteditable data-col="${col}"></div>
+//   `
+// }
+
+function toCell(row) {
+  return function(_, col) {
+    return `
+      <div 
+        class="cell" 
+        contenteditable 
+        data-col="${col}"
+        data-type="cell"
+        data-id="${row}:${col}"
+      ></div>
+    `;
+  };
 }
 
 function toColumn(col, index) {
@@ -18,12 +32,14 @@ function toColumn(col, index) {
   `;
 }
 
-function createRow(idx, content) {
-  const resize = idx ? `<div class="row-resize" data-resize="row"></div>` : '';
+function createRow(index, content) {
+  const resize = index
+      ? '<div class="row-resize" data-resize="row"></div>'
+      : '';
   return `
-    <div class="row" data-type="resizable" data-resize="row">
+    <div class="row" data-type="resizable">
       <div class="row-info">
-        ${idx ? idx : ''}
+        ${index ? index : ''}
         ${resize}
       </div>
       <div class="row-data">${content}</div>
@@ -31,12 +47,12 @@ function createRow(idx, content) {
   `;
 }
 
-function toChar(_, idx) {
-  return String.fromCharCode(CODES.A + idx);
+function toChar(_, index) {
+  return String.fromCharCode(CODES.A + index);
 }
 
-export function createTable(rowsCount = 20) {
-  const colsCount = CODES.Z - CODES.A + 1;
+export function createTable(rowsCount = 15) {
+  const colsCount = CODES.Z - CODES.A + 1; // Compute cols count
   const rows = [];
 
   const cols = new Array(colsCount)
@@ -47,13 +63,15 @@ export function createTable(rowsCount = 20) {
 
   rows.push(createRow(null, cols));
 
-  for (let i = 0; i < rowsCount; i++) {
+  for (let row = 0; row < rowsCount; row++) {
     const cells = new Array(colsCount)
         .fill('')
-        .map(toCell)
+        // .map((_, col) => toCell(row, col))
+        .map(toCell(row))
         .join('');
 
-    rows.push(createRow(i + 1, cells));
+    rows.push(createRow(row + 1, cells));
   }
+
   return rows.join('');
 }
